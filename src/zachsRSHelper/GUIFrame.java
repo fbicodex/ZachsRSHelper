@@ -3,7 +3,7 @@
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-package miningbot;
+package zachsRSHelper;
 
 import java.awt.Color;
 
@@ -40,7 +40,7 @@ public class GUIFrame extends javax.swing.JFrame {
         invConfigButton = new javax.swing.JButton();
         jLabel3 = new javax.swing.JLabel();
         invRunButton = new javax.swing.JButton();
-        inventoryConfigPanel1 = new miningbot.InventoryConfigPanel();
+        inventoryConfigPanel1 = new zachsRSHelper.InventoryConfigPanel();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
 
@@ -146,7 +146,7 @@ public class GUIFrame extends javax.swing.JFrame {
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JButton invConfigButton;
     private javax.swing.JButton invRunButton;
-    private miningbot.InventoryConfigPanel inventoryConfigPanel1;
+    private zachsRSHelper.InventoryConfigPanel inventoryConfigPanel1;
     private javax.swing.JLabel jLabel1;
     private javax.swing.JLabel jLabel2;
     private javax.swing.JLabel jLabel3;

@@ -94,7 +94,7 @@
         <Property name="enabled" type="boolean" value="false"/>
       </Properties>
     </Component>
-    <Component class="miningbot.InventoryConfigPanel" name="inventoryConfigPanel1">
+    <Component class="zachsRSHelper.InventoryConfigPanel" name="inventoryConfigPanel1">
       <Properties>
         <Property name="enabled" type="boolean" value="false"/>
       </Properties>
