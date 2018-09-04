@@ -11,6 +11,7 @@ import java.awt.Graphics;
 import java.awt.Graphics2D;
 import java.awt.MouseInfo;
 import java.awt.Point;
+import java.util.ArrayList;
 import javax.swing.JFrame;
 import javax.swing.JPanel;
 
@@ -34,6 +35,8 @@ public class selectionFrame extends javax.swing.JFrame implements Runnable {
     private int py2 = 0;
     
     private int[] data;
+    private ArrayList<Integer> redTiles = new ArrayList<Integer>();
+    private ArrayList<Integer> redRemoveTiles = new ArrayList<Integer>();
     
     //inventory columns are not equal, line 1&3 are closer to the middle slighty
     //so this array will have the right proportions to accoutn for that
@@ -90,6 +93,25 @@ public class selectionFrame extends javax.swing.JFrame implements Runnable {
             int yPart = (int)((y2-y1)*((i+1)/7.0));
             g2.drawLine(x1, y1+yPart, x2, y1+yPart);
         }
+        //fill in red tiles
+        for(int tile: redTiles){
+            int x = getTileX(tile);
+            int y = getTileY(tile);
+            int width = (int)((double)(x2-x1)/4.0);
+            int height = (int)((double)(y2-y1)/7.0);
+            g2.setColor(java.awt.Color.RED);
+            g2.fillRect(x, y, width-1, height-1);
+        }
+        //clear removed red tiles
+        for(int tile: redRemoveTiles){
+            int x = getTileX(tile);
+            int y = getTileY(tile);
+            int width = (int)((double)(x2-x1)/4.0);
+            int height = (int)((double)(y2-y1)/7.0);
+            g2.setColor(java.awt.Color.RED);
+            g2.clearRect(x, y, width-1, height-1);
+        }
+        redRemoveTiles.clear();
     }
     
     public void paintSelection(Graphics g){
@@ -134,6 +156,45 @@ public class selectionFrame extends javax.swing.JFrame implements Runnable {
             this.repaint();
         }
         thread = null;
+    }
+    
+    public boolean selectionIsBeingChecked(){
+        return data[4]==1;
+    }
+    
+    public boolean mouseIsInsideInventory(int x, int y){
+        if((x > x1 && x < x2)&&(y > y1 && y < y2))
+            return true;
+        return false;
+    }
+    
+    /* which inventory tile is it on?
+     * tiles numbered 0-27 with following pattern
+     * 0 1 2 3
+     * 4 5 6 7
+     * ...
+     * 24 25 26 27
+     */
+    public int getInventoryTile(int x, int y){
+        int tile = 0;
+        int column = (int)(((double)(x-x1)) / ((double)(x2-x1))*4); //this is one slick formula, I am proud of my self for coming up with it on the fly lol.
+        int row = (int)(((double)(y-y1)) / ((double)(y2-y1))*7);
+        tile = (row*4)+column;
+        return tile;
+    }
+    
+    public int getTileX(int tile){
+        int x = 0;
+        int column = tile%4;
+        x = x1 + (int)((x2-x1)*(double)(column/4.0));
+        return x;
+    }
+    
+    public int getTileY(int tile){
+        int y = 0;
+        int row = tile/4;
+        y = y1 + (int)((y2-y1)*(double)(row/7.0));
+        return y;
     }
     
     public class DrawPanel extends JPanel {
@@ -191,24 +252,44 @@ public class selectionFrame extends javax.swing.JFrame implements Runnable {
     }// </editor-fold>//GEN-END:initComponents
 
     private void formMousePressed(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_formMousePressed
-        if(data[4]==1){
-            this.setVisible(false);
-            return;
-        }
         Point b = MouseInfo.getPointerInfo().getLocation();
-        x1 = (int) b.getX();
-        y1 = (int) b.getY();
-        System.out.printf("START selection x:%d y:%d\n",x1,y1);
-        System.out.println("starting thread");
-        this.start();
-        System.out.println("exit mousePressed method");
+        int x = (int) b.getX();
+        int y = (int) b.getY();
+                
+        if(selectionIsBeingChecked()){ 
+            if(mouseIsInsideInventory(x,y)){
+                int tile = this.getInventoryTile(x,y);
+                ///*debug*/System.out.printf("Tile Selected: %d \n",tile);
+                // we want to add the red tile if it is not red yet.
+                // but if it is already red, we want to remove it
+                if(redTiles.contains(tile)){
+                    redTiles.remove(redTiles.indexOf(tile));
+                    redRemoveTiles.add(tile);
+                    System.out.println("removing tile: "+tile);
+                }else{
+                    redTiles.add(tile);
+                    System.out.println("adding tile: "+tile);
+                }
+                this.repaint();
+            }else{
+                this.setVisible(false);
+                return;
+            }
+        }else{
+            x1 = x;
+            y1 = y;
+            ///*debug*/System.out.printf("START selection x:%d y:%d\n",x1,y1);
+            ///*debug*/System.out.println("starting thread");
+            this.start();
+            ///*debug*/System.out.println("exit mousePressed method");
+        }
     }//GEN-LAST:event_formMousePressed
 
     private void formMouseReleased(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_formMouseReleased
-        
+        if(selectionIsBeingChecked())return; //don't run this method if selection is being "checked"
         this.stop();
-        System.out.printf("END selection x:%d y:%d\n",x2,y2);
-        System.out.println("Mouse is released, method");
+        ///*debug*/System.out.printf("END selection x:%d y:%d\n",x2,y2);
+        ///*debug*/System.out.println("Mouse is released, method");
         data[0] = x1;
         data[1] = y1;
         data[2] = x2;
