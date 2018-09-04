@@ -6,6 +6,12 @@
 package zachsRSHelper;
 
 import java.awt.Color;
+import java.awt.Dimension;
+import java.awt.MouseInfo;
+import java.awt.Point;
+import java.awt.Toolkit;
+import javax.swing.JFrame;
+import javax.swing.JLabel;
 
 /**
  *
@@ -36,18 +42,23 @@ public class GUIFrame extends javax.swing.JFrame {
     private void initComponents() {
 
         jLabel1 = new javax.swing.JLabel();
-        jLabel2 = new javax.swing.JLabel();
         invConfigButton = new javax.swing.JButton();
         jLabel3 = new javax.swing.JLabel();
         invRunButton = new javax.swing.JButton();
         inventoryConfigPanel1 = new zachsRSHelper.InventoryConfigPanel();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
+        addWindowFocusListener(new java.awt.event.WindowFocusListener() {
+            public void windowGainedFocus(java.awt.event.WindowEvent evt) {
+                formWindowGainedFocus(evt);
+            }
+            public void windowLostFocus(java.awt.event.WindowEvent evt) {
+                formWindowLostFocus(evt);
+            }
+        });
 
         jLabel1.setFont(new java.awt.Font("Tahoma", 1, 11)); // NOI18N
         jLabel1.setText("Zachs RS Helper");
-
-        jLabel2.setText("keyPressed");
 
         invConfigButton.setText("Configure");
         invConfigButton.addActionListener(new java.awt.event.ActionListener() {
@@ -71,7 +82,6 @@ public class GUIFrame extends javax.swing.JFrame {
                 .addContainerGap()
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addComponent(jLabel1)
-                    .addComponent(jLabel2)
                     .addGroup(layout.createSequentialGroup()
                         .addComponent(jLabel3)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
@@ -91,9 +101,7 @@ public class GUIFrame extends javax.swing.JFrame {
                     .addComponent(invConfigButton)
                     .addComponent(jLabel3)
                     .addComponent(invRunButton))
-                .addGap(11, 11, 11)
-                .addComponent(jLabel2)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 134, Short.MAX_VALUE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 159, Short.MAX_VALUE)
                 .addComponent(inventoryConfigPanel1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addContainerGap())
         );
@@ -107,6 +115,46 @@ public class GUIFrame extends javax.swing.JFrame {
         inventoryConfigPanel1.setVisible(true);
         inventoryConfigPanel1.setEnabled(true);
     }//GEN-LAST:event_invConfigButtonActionPerformed
+
+    private void formWindowLostFocus(java.awt.event.WindowEvent evt) {//GEN-FIRST:event_formWindowLostFocus
+        // TODO add your handling code here:
+        /*if(inventoryConfigPanel1.isSetting){
+            Point b = MouseInfo.getPointerInfo().getLocation();
+            int x = (int) b.getX();
+            int y = (int) b.getY();
+            System.out.printf("click jframe x:%d y:%d\n",x,y);
+            
+            //JFrame jimmy = new JFrame();
+            //jimmy.setUndecorated(true);
+           // jimmy.getContentPane().setBackground(new Color(1.0f,1.0f,1.0f,0.0f));
+            //jimmy.setBackground(new Color(1.0f,1.0f,1.0f,0.0f));
+
+            Dimension screenSize = Toolkit.getDefaultToolkit().getScreenSize();
+            double width = screenSize.getWidth();
+            double height = screenSize.getHeight();
+            //System.out.printf("width:%f Height:%f\n",width,height);
+            //jimmy.setBounds(x-100,y-100,400,400);
+            //JLabel label1 = new JLabel("Select one corner to another of RS");
+            //label1.setBackground(Color.white);
+            //label1.setFont(new Font("Dialog",Font.BOLD,22));
+            //jimmy.add(label1);
+            //jimmy.setVisible(true);
+        }
+        */
+    }//GEN-LAST:event_formWindowLostFocus
+
+    private void formWindowGainedFocus(java.awt.event.WindowEvent evt) {//GEN-FIRST:event_formWindowGainedFocus
+        if(inventoryConfigPanel1.isSetting){
+            inventoryConfigPanel1.isSetting = false;
+            System.out.println("GUIFrame gained focus after setting");
+            int x1 = inventoryConfigPanel1.data[0];
+            int y1 = inventoryConfigPanel1.data[1];
+            int x2 = inventoryConfigPanel1.data[2];
+            int y2 = inventoryConfigPanel1.data[3];
+            System.out.printf("GUIFrame x1:%d y1:%d x2:%d y2:%d \n",x1,y1,x2,y2);
+            inventoryConfigPanel1.enableCheck();
+        }
+    }//GEN-LAST:event_formWindowGainedFocus
 
     /**
      * @param args the command line arguments
@@ -148,7 +196,6 @@ public class GUIFrame extends javax.swing.JFrame {
     private javax.swing.JButton invRunButton;
     private zachsRSHelper.InventoryConfigPanel inventoryConfigPanel1;
     private javax.swing.JLabel jLabel1;
-    private javax.swing.JLabel jLabel2;
     private javax.swing.JLabel jLabel3;
     // End of variables declaration//GEN-END:variables
 }

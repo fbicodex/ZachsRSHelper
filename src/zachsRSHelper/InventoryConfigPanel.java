@@ -6,6 +6,13 @@
 package zachsRSHelper;
 
 import java.awt.Color;
+import java.awt.Dimension;
+import java.awt.Font;
+import java.awt.Graphics;
+import java.awt.MouseInfo;
+import java.awt.Point;
+import java.awt.PointerInfo;
+import java.awt.Toolkit;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
 
@@ -14,12 +21,19 @@ import javax.swing.JLabel;
  * @author zech
  */
 public class InventoryConfigPanel extends javax.swing.JPanel {
-
+    
+    /**
+     *  Class variables
+     */
+    public boolean isSetting = false;
+    public int[] data = new int[5];
+    
     /**
      * Creates new form InventoryConfigPanel
      */
     public InventoryConfigPanel() {
         initComponents();
+        coords_tip_label.setVisible(false);
     }
 
     /**
@@ -33,25 +47,38 @@ public class InventoryConfigPanel extends javax.swing.JPanel {
 
         jLabel1 = new javax.swing.JLabel();
         jLabel2 = new javax.swing.JLabel();
-        jButton1 = new javax.swing.JButton();
-        jLabel3 = new javax.swing.JLabel();
+        setButton = new javax.swing.JButton();
+        coords_label = new javax.swing.JLabel();
+        coords_tip_label = new javax.swing.JLabel();
+        checkButton = new javax.swing.JButton();
 
         setBorder(javax.swing.BorderFactory.createLineBorder(new java.awt.Color(0, 0, 0)));
 
         jLabel1.setFont(new java.awt.Font("Tahoma", 1, 11)); // NOI18N
         jLabel1.setText("Inventory Dropper Config");
 
-        jLabel2.setText("Runescape Screen coordinates:");
+        jLabel2.setText("Inventory Coordinates:");
 
-        jButton1.setText("Set");
-        jButton1.addActionListener(new java.awt.event.ActionListener() {
+        setButton.setText("Set");
+        setButton.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
-                jButton1ActionPerformed(evt);
+                setButtonActionPerformed(evt);
             }
         });
 
-        jLabel3.setBackground(new java.awt.Color(255, 255, 255));
-        jLabel3.setText("please set");
+        coords_label.setBackground(new java.awt.Color(255, 255, 255));
+        coords_label.setText("please set");
+
+        coords_tip_label.setForeground(new java.awt.Color(0, 0, 255));
+        coords_tip_label.setText("start from top left corner of your inventory");
+
+        checkButton.setText("Check");
+        checkButton.setEnabled(false);
+        checkButton.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                checkButtonActionPerformed(evt);
+            }
+        });
 
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(this);
         this.setLayout(layout);
@@ -60,13 +87,18 @@ public class InventoryConfigPanel extends javax.swing.JPanel {
             .addGroup(layout.createSequentialGroup()
                 .addContainerGap()
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addComponent(jButton1)
-                    .addComponent(jLabel1)
-                    .addGroup(layout.createSequentialGroup()
-                        .addComponent(jLabel2)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                        .addComponent(jLabel3)))
-                .addContainerGap(34, Short.MAX_VALUE))
+                    .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
+                        .addGroup(layout.createSequentialGroup()
+                            .addComponent(setButton)
+                            .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                            .addComponent(coords_tip_label, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                        .addComponent(jLabel1)
+                        .addGroup(layout.createSequentialGroup()
+                            .addComponent(jLabel2)
+                            .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                            .addComponent(coords_label)))
+                    .addComponent(checkButton))
+                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
         );
         layout.setVerticalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -75,27 +107,49 @@ public class InventoryConfigPanel extends javax.swing.JPanel {
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(jLabel2)
-                    .addComponent(jLabel3))
+                    .addComponent(coords_label))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(jButton1)
-                .addGap(0, 114, Short.MAX_VALUE))
+                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(setButton)
+                    .addComponent(coords_tip_label))
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addComponent(checkButton)
+                .addGap(0, 85, Short.MAX_VALUE))
         );
     }// </editor-fold>//GEN-END:initComponents
 
-    private void jButton1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton1ActionPerformed
-        // TODO add your handling code here:
-        JFrame jimmy = new JFrame();
-        jimmy.setUndecorated(true);
-        jimmy.getContentPane().setBackground(new Color(1.0f,1.0f,1.0f,0.0f));
-        jimmy.setBackground(new Color(1.0f,1.0f,1.0f,0.0f));
-        jimmy.add(new JLabel("Select one corner to another of RS"));
-    }//GEN-LAST:event_jButton1ActionPerformed
+    public void enableCheck(){
+        checkButton.setEnabled(true);
+        coords_label.setText(String.format("(%d,%d) to (%d,%d)", data[0],data[1],data[2],data[3]));
+    }
+    
+    private void setButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_setButtonActionPerformed
+        coords_tip_label.setVisible(true);
+        isSetting = true;
+        data[4] = 0;
+        selectionFrame selectWindow = new selectionFrame(data);
+        selectWindow.setVisible(true);
+        //DEBUG System.out.println("EXIT setButton method");
+    }//GEN-LAST:event_setButtonActionPerformed
+
+    private void checkButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_checkButtonActionPerformed
+        int x1 = this.data[0];
+        int y1 = this.data[1];
+        int x2 = this.data[2];
+        int y2 = this.data[3];
+        System.out.printf("checkButton x1:%d y1:%d x2:%d y2:%d \n",x1,y1,x2,y2);
+        selectionFrame selectWindow = new selectionFrame(data);
+        selectWindow.setVisible(true);
+        selectWindow.repaint();
+    }//GEN-LAST:event_checkButtonActionPerformed
 
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
-    private javax.swing.JButton jButton1;
+    private javax.swing.JButton checkButton;
+    private javax.swing.JLabel coords_label;
+    private javax.swing.JLabel coords_tip_label;
     private javax.swing.JLabel jLabel1;
     private javax.swing.JLabel jLabel2;
-    private javax.swing.JLabel jLabel3;
+    private javax.swing.JButton setButton;
     // End of variables declaration//GEN-END:variables
 }
